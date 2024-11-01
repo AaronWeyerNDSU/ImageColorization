@@ -5,7 +5,7 @@ from torchvision.transforms import *
 
 from GrayNet import *
 
-IMAGESIZE = 128
+IMAGESIZE = 512
 
 @torch.no_grad()
 def processFrame(model, cam, device):
@@ -61,7 +61,7 @@ cam.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 
 # Create Neural Network and load weights from file.
 model = GrayNet().to(device)
-loadPath = "finaltrainedweights.pt"
+loadPath = "largeimagetrainedweights.pt"#"480pweights2.pt"#f"finaltrainedweights.pt"
 model.load_state_dict(torch.load(loadPath))
 
 # Main loop.

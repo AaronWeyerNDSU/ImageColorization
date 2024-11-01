@@ -9,7 +9,7 @@ from GrayNet import *
 @torch.no_grad()
 def processFrame(model, frame, device, videoSize, showFrames=False):   
     # Resize input frame to the desired output size.
-    inp = cv2.resize(frame, videoSize)
+    inp = np.clip(cv2.resize(frame, videoSize),0,255)
 
     # Convert input frame to tensor.
     cv2tensor = transforms.ToTensor()
@@ -32,7 +32,7 @@ def processFrame(model, frame, device, videoSize, showFrames=False):
         cv2.waitKey(1)
 
     # Return processed frame to write to file.
-    return (frameOutput*255).astype(np.uint8)
+    return np.clip((frameOutput*255).astype(np.uint8), 0, 255)
 
 # Test if GPU is available.
 print("Testing if GPU is available.")
@@ -44,14 +44,15 @@ else:
     print("GPU is not available, Falling back to CPU.")
 
 # Load input Black and white video to cv2 object.
-input_video_path = 'AndygriffithLake Cropped 360p.mp4'
+input_video_path = 'AndygriffithLake.mp4'#'Depeche Mode - Wagging Tongue (Official Video).mp4'#
 cap = cv2.VideoCapture(input_video_path)
 if not cap.isOpened():
     print("Error: Could not open the video file.")
 
 width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-VIDEOSIZE = (64,64)#(width, height)
+VIDEOSIZE = (256,256)
+#VIDEOSIZE = (width, height)
 
 # Setup video output.
 output_video_path = 'output_video.avi'
@@ -63,7 +64,7 @@ if not out.isOpened():
 
 # Create Neural Network and load weights from file.
 model = GrayNet().to(device)
-loadPath = f"finaltrainedweights.pt"
+loadPath = "480pweights3.pt"#"largeimagetrainedweights.pt"#"480pweights2.pt"#f"finaltrainedweights.pt"
 model.load_state_dict(torch.load(loadPath))
 
 # Iterate over each frame
